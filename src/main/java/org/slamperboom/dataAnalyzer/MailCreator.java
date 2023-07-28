@@ -15,10 +15,12 @@ public class MailCreator {
     }
 
     public void createMail() throws IOException {
+        //создаем файл, в который будем записывать текст письма
         File outputFile = new File("generatedMail.txt");
         if (!outputFile.exists() && !outputFile.createNewFile()){
             throw new IOException("Не удалось создать файл");
         }
+        //постепенно добавляем url страниц в файл
         try(BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile)))){
             writer.write("Здравствуйте, дорогая и.о. секретаря");
             writer.newLine();
@@ -27,27 +29,33 @@ public class MailCreator {
             writer.newLine();
             writer.newLine();
 
-            writer.write("Изчезли следующие страницы:");
-            writer.newLine();
-            for(String url : deletedPages){
-                writer.write("\t"+url);
+            if(!deletedPages.isEmpty()) {
+                writer.write("Изчезли следующие страницы:");
+                writer.newLine();
+                for (String url : deletedPages) {
+                    writer.write("\t" + url);
+                    writer.newLine();
+                }
                 writer.newLine();
             }
-            writer.newLine();
-            writer.write("Появились следующие страницы:");
-            writer.newLine();
-            for(String url : addedPages){
-                writer.write("\t"+url);
+            if(!addedPages.isEmpty()) {
+                writer.write("Появились следующие страницы:");
+                writer.newLine();
+                for (String url : addedPages) {
+                    writer.write("\t" + url);
+                    writer.newLine();
+                }
                 writer.newLine();
             }
-            writer.newLine();
-            writer.write("Изменились следующие страницы:");
-            writer.newLine();
-            for(String url : modifiedPages){
-                writer.write("\t"+url);
+            if(!modifiedPages.isEmpty()) {
+                writer.write("Изменились следующие страницы:");
+                writer.newLine();
+                for (String url : modifiedPages) {
+                    writer.write("\t" + url);
+                    writer.newLine();
+                }
                 writer.newLine();
             }
-            writer.newLine();
 
             writer.write("С уважением,");
             writer.newLine();

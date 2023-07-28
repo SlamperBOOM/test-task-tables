@@ -18,14 +18,17 @@ public class PagesAnalyzer {
         File previousFile = new File(previousDataPath);
         File currentFile = new File(currentDataPath);
 
+        //сначала проверяем, что переданные файлы существуют
         if(!previousFile.exists() || !currentFile.exists()){
             throw new IOException("Не удалось найти файлы");
         }
+        //затем проверяем, что мы можем их прочитать
         if(!(previousFile.isFile() && previousFile.canRead()) ||
         !(currentFile.isFile() && currentFile.canRead())){
             throw new IOException("Нет возможности прочитать указанные файлы");
         }
 
+        //создаем потоки для чтения
         try{
             previousReader = new FileInputStream(previousFile);
         }catch (IOException e){
@@ -35,11 +38,14 @@ public class PagesAnalyzer {
         try{
             currentReader = new FileInputStream(currentFile);
         }catch (IOException e){
+            //при ошибке создания потока чтения закрываем уже открытые
             previousReader.close();
             e.printStackTrace();
             throw new IOException("Не удалось открыть файл с сегодняшними страницами");
         }
 
+        //properies позволяет удобно считать и использовать данные из файлов
+        //и ключ и значение в properties является String поэтому этот класс подходит под эту задачу
         previousPages = new Properties();
         currentPages = new Properties();
         try{
@@ -58,6 +64,9 @@ public class PagesAnalyzer {
         deletedPages = new ArrayList<>();
         modifiedPages = new ArrayList<>();
         addedPages = new ArrayList<>();
+        //сначала смотрим была ли удалена страница
+        //для этого смотрим есть ли страница из вчерашнего списка в сегодняшнем
+        //затем, если она не была удалена, сравниваем коды страниц
         for(String key : previousPages.keySet().toArray(new String[0])){
             if(currentPages.getProperty(key) == null){
                 deletedPages.add(key);
@@ -65,6 +74,8 @@ public class PagesAnalyzer {
                 modifiedPages.add(key);
             }
         }
+        //смотрим была ли страница добавлена
+        //по аналогии с поиском удаленных страниц
         for(String key : currentPages.keySet().toArray(new String[0])){
             if(previousPages.getProperty(key) == null){
                 addedPages.add(key);
